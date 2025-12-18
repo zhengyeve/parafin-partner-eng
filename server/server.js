@@ -161,47 +161,6 @@ app.post("/parafin/create_sandbox_offer", async (req, res) => {
 });
 
 
-app.post("/parafin/approve_offer", async (req, res) => {
-  const config = {
-    auth: {
-      username: process.env.PARAFIN_CLIENT_ID,
-      password: process.env.PARAFIN_CLIENT_SECRET,
-    },
-  };
-
-  const offerId = req.body.capitalProductOfferId;
-  const urlApplications = `${PARAFIN_BASE_URL}/capital_product_applications`;
-
-  const resultApplications = await axios.get(urlApplications, config);
-  const applications = resultApplications.data.results;
-  for (let data of applications) {
-    if (data.capital_product_offer_id === offerId) {
-      var applicationId = data.id;
-      break;
-    }
-  };
-
-  const urlApprove = `${PARAFIN_BASE_URL}/sandbox/capital_product_application/${applicationId}/approve`;
-
-  console.log(offerId, applicationId);
-  try {
-    // make call to approve capital product offer
-    const result = await axios.post(urlApprove, {}, config);
-    res.send({
-      status: "success",
-      data: result.data,
-    });
-  } catch (error) {
-    console.log(error.response.data);
-    res.send({
-      errorCode: error.response.status,
-      message: error.response.data,
-    });
-  }
-
-});
-
-
 // fund the capital product
 app.post("/parafin/fund", async (req, res) => {
   const url = `${PARAFIN_BASE_URL}/sandbox/fund_capital_product`;
